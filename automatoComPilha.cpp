@@ -2,6 +2,7 @@
 #include <vector>
 #include <stack>
 #include <algorithm>
+#include <fstream>
 using namespace std;
 
 struct no{
@@ -16,6 +17,7 @@ no* insereLista(no* l,int adjacente, char cond, char empilha, char desempilha);
 char cin_verifica_alfabeto(string alfabeto);
 vector<no*> inicializaGrafo(int n, string alfabeto);
 void mostrarPilha(stack<char> pilha);
+void criaDOT(const vector<no*> &estados, const string &nomeArquivo);
 
 int main(){
     stack<char>pilha_automato;
@@ -41,6 +43,7 @@ int main(){
     }
     estados = inicializaGrafo(n, alfabeto);
 
+    criaDOT(estados, "automato.dot");
 
     cout << "Digite a expressao que voce quer verificar no automato" << endl;
     cin >> expressao;
@@ -94,6 +97,10 @@ int main(){
     else{
         cout << "Expressão invalida" << endl;
     }
+
+    system("dot -Tpng automato.dot -o automato.png");
+    system("libreoffice automato.png");
+
     return 0;
 }
 
@@ -165,5 +172,20 @@ void mostrarPilha(stack<char> pilha){
     cout << endl;
 }
 
-
-
+void criaDOT(const vector<no*> &estados, const string &nomeArquivo) {
+    ofstream arquivo(nomeArquivo);
+    if (!arquivo.is_open()) {
+        cout << "Erro ao abrir o arquivo!" << endl;
+        return;
+    }
+    arquivo << "digraph G {" << endl;
+    for (int i = 0; i < estados.size(); i++) {
+        no *atual = estados[i];
+        while (atual != NULL) {
+            arquivo << "    " << i << " -> " << atual->idx_estado_adjacente << " [label=\"" << atual->cond_p_link << "; " << atual->link_empilha << ", " << atual->link_desempilha << "\"];" << endl;
+            atual = atual->link;
+        }
+    }
+    arquivo << "}" << endl;
+    arquivo.close();
+}
