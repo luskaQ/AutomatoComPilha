@@ -1,3 +1,4 @@
+//Trabalho feito por Lucas Polidorio, Marcos Franca e Caua Monteiro
 #include <iostream>
 #include <vector>
 #include <stack>
