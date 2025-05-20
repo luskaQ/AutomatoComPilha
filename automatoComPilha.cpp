@@ -18,7 +18,7 @@ no* insereLista(no* l,int adjacente, char cond, char empilha, char desempilha);
 char cin_verifica_alfabeto(string alfabeto);
 vector<no*> inicializaGrafo(int n, string alfabeto);
 void mostrarPilha(stack<char> pilha);
-void criaDOT(const vector<no*> &estados, const string &nomeArquivo);
+void criaDOT(const vector<no*> &estados, const string &nomeArquivo, const vector<int> &estados_finais, int inicial);
 
 int main(){
     stack<char>pilha_automato;
@@ -44,7 +44,7 @@ int main(){
     }
     estados = inicializaGrafo(n, alfabeto);
 
-    criaDOT(estados, "automato.dot");
+    criaDOT(estados, "automato.dot", estados_finais, inicial);
 
     cout << "Digite a expressao que voce quer verificar no automato" << endl;
     cin >> expressao;
@@ -173,13 +173,20 @@ void mostrarPilha(stack<char> pilha){
     cout << endl;
 }
 
-void criaDOT(const vector<no*> &estados, const string &nomeArquivo) {
+void criaDOT(const vector<no*> &estados, const string &nomeArquivo, const vector<int> &estados_finais, int estado_inicial) {
     ofstream arquivo(nomeArquivo);
     if (!arquivo.is_open()) {
         cout << "Erro ao abrir o arquivo!" << endl;
         return;
     }
     arquivo << "digraph G {" << endl;
+        arquivo << "    rankdir=LR;" << endl << "    node[shape=doublecircle, style=filled, fillcolor=lightyellow]"; 
+
+    arquivo << estados_finais[0];
+    for(int j = 1; j < estados_finais.size(); j++) {
+        arquivo << "," << estados_finais[j];
+    }
+    arquivo << ";" << endl << "    node[shape=circle, style=filled, fillcolor=lightyellow];" << endl << "    start[shape=point];" << endl << "    start->" << estado_inicial << ";" << endl;
     for (int i = 0; i < estados.size(); i++) {
         no *atual = estados[i];
         while (atual != NULL) {
